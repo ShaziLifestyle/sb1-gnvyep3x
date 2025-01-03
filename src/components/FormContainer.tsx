@@ -9,12 +9,12 @@ import { Modal } from './Modal';
 import { AgentForm } from './AgentForm';
 
 interface FormContainerProps {
-  table?: string;
+  formNumber?: number;
   filter?: Record<string, any>;
 }
 
-export function FormContainer({ table, filter }: FormContainerProps) {
-  const { form, widgets, loading: metaLoading, error: metaError } = useMetaForm('Main');
+export function FormContainer({ formNumber = 1, filter }: FormContainerProps) {
+  const { form, widgets, loading: metaLoading, error: metaError } = useMetaForm(formNumber);
   const { data, loading: dataLoading, error: dataError } = useFormData(form?.name || null, filter);
   const { addAgent, updateAgent, deleteAgent, loading: agentLoading } = useAgents();
   
@@ -32,11 +32,11 @@ export function FormContainer({ table, filter }: FormContainerProps) {
   };
 
   const handleDelete = async (agent: Record<string, any>) => {
-    if (!confirm('Are you sure you want to delete this agent?')) return;
+    if (!confirm('Are you sure you want to delete this record?')) return;
     
     const success = await deleteAgent(agent.id);
     if (success) {
-      window.location.reload(); // Refresh to show updated data
+      window.location.reload();
     }
   };
 
@@ -51,8 +51,14 @@ export function FormContainer({ table, filter }: FormContainerProps) {
     
     if (success) {
       setIsModalOpen(false);
-      window.location.reload(); // Refresh to show updated data
+      window.location.reload();
     }
+  };
+
+  const handleTableSelect = (table: string) => {
+    // Navigate to the selected table's form
+    const nextFormNumber = table === 'tasks' ? 2 : table === 'prompts' ? 3 : 1;
+    window.location.href = `?form=${nextFormNumber}`;
   };
 
   if (metaLoading || dataLoading || agentLoading) {
@@ -74,15 +80,17 @@ export function FormContainer({ table, filter }: FormContainerProps) {
         description={form.description}
         widgets={widgets}
         data={data}
+        formNumber={formNumber}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onTableSelect={handleTableSelect}
       />
       
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={selectedAgent ? 'Edit Agent' : 'Add New Agent'}
+        title={selectedAgent ? 'Edit Record' : 'Add New Record'}
       >
         <AgentForm
           widgets={widgets}

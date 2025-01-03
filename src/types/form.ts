@@ -2,7 +2,7 @@ export interface MetaForm {
   id: string;
   name: string;
   description: string;
-  form_type: 'Main' | 'Sub Form';
+  form_number: number;
   navigation_logic?: Record<string, any>;
 }
 

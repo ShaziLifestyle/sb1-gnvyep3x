@@ -2,17 +2,29 @@ import React from 'react';
 import { User } from 'lucide-react';
 import type { MetaWidget } from '../types/form';
 import { ActionButtons } from './ActionButtons';
+import { ChildTableButtons } from './ChildTableButtons';
 
 interface AgentCardProps {
   agent: Record<string, any>;
   widgets: MetaWidget[];
+  formNumber: number;
   onAdd: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onTableSelect: (table: string) => void;
   onClick?: () => void;
 }
 
-export function AgentCard({ agent, widgets, onAdd, onEdit, onDelete, onClick }: AgentCardProps) {
+export function AgentCard({ 
+  agent, 
+  widgets, 
+  formNumber,
+  onAdd, 
+  onEdit, 
+  onDelete,
+  onTableSelect,
+  onClick 
+}: AgentCardProps) {
   const getWidgetValue = (widget: MetaWidget) => {
     const value = agent[widget.name];
     if (widget.type === 'textarea') {
@@ -69,6 +81,13 @@ export function AgentCard({ agent, widgets, onAdd, onEdit, onDelete, onClick }: 
             </div>
           );
         })}
+
+        <div onClick={(e) => e.stopPropagation()}>
+          <ChildTableButtons 
+            formNumber={formNumber}
+            onTableSelect={onTableSelect}
+          />
+        </div>
       </div>
     </div>
   );

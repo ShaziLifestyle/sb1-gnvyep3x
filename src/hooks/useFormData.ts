@@ -14,9 +14,19 @@ export function useFormData(formName: string | null, filter?: Record<string, any
           return;
         }
 
-        console.log('Fetching data for form:', formName);
-        const tableName = formName.split(' ')[0].toLowerCase();
-        console.log('Table name:', tableName);
+        // Get the table name from meta_forms
+        const { data: formData } = await supabase
+          .from('meta_forms')
+          .select('name')
+          .eq('name', formName)
+          .single();
+
+        if (!formData) {
+          throw new Error('Form not found');
+        }
+
+        // Convert form name to table name (e.g., "Agents Form" -> "agents")
+        const tableName = formData.name.split(' ')[0].toLowerCase();
         
         let query = supabase.from(tableName).select('*');
         
@@ -29,7 +39,6 @@ export function useFormData(formName: string | null, filter?: Record<string, any
         const { data: result, error: dataError } = await query;
         
         if (dataError) throw dataError;
-        console.log('Fetched data:', result);
         setData(result || []);
       } catch (err) {
         console.error('Error fetching data:', err);

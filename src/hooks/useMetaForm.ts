@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { MetaForm, MetaWidget } from '../types/form';
 
-export function useMetaForm(formType: 'Main' | 'Sub Form' = 'Main') {
+export function useMetaForm(formNumber: number = 1) {
   const [form, setForm] = useState<MetaForm | null>(null);
   const [widgets, setWidgets] = useState<MetaWidget[]>([]);
   const [loading, setLoading] = useState(true);
@@ -11,12 +11,12 @@ export function useMetaForm(formType: 'Main' | 'Sub Form' = 'Main') {
   useEffect(() => {
     async function fetchFormData() {
       try {
-        console.log('Fetching form data for type:', formType);
+        console.log('Fetching form data for number:', formNumber);
         
         const { data: formData, error: formError } = await supabase
           .from('meta_forms')
           .select('*')
-          .eq('form_type', formType)
+          .eq('form_number', formNumber)
           .single();
 
         if (formError) throw formError;
@@ -41,7 +41,7 @@ export function useMetaForm(formType: 'Main' | 'Sub Form' = 'Main') {
     }
 
     fetchFormData();
-  }, [formType]);
+  }, [formNumber]);
 
   return { form, widgets, loading, error };
 }

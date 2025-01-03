@@ -8,21 +8,25 @@ interface DynamicFormProps {
   description: string;
   widgets: MetaWidget[];
   data: Record<string, any>[];
+  formNumber: number;
   onRowClick?: (row: Record<string, any>) => void;
   onAdd: () => void;
   onEdit: (agent: Record<string, any>) => void;
   onDelete: (agent: Record<string, any>) => void;
+  onTableSelect: (table: string) => void;
 }
 
 export function DynamicForm({ 
   title, 
   description, 
   widgets, 
-  data, 
+  data,
+  formNumber,
   onRowClick,
   onAdd,
   onEdit,
-  onDelete 
+  onDelete,
+  onTableSelect
 }: DynamicFormProps) {
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -36,7 +40,7 @@ export function DynamicForm({
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <PlusCircle className="w-5 h-5" />
-          Add New Agent
+          Add New
         </button>
       </div>
       
@@ -46,17 +50,19 @@ export function DynamicForm({
             key={row.id}
             agent={row}
             widgets={widgets}
+            formNumber={formNumber}
             onClick={() => onRowClick?.(row)}
             onAdd={onAdd}
             onEdit={() => onEdit(row)}
             onDelete={() => onDelete(row)}
+            onTableSelect={onTableSelect}
           />
         ))}
       </div>
       
       {data.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No agents found</p>
+          <p className="text-gray-500">No records found</p>
         </div>
       )}
     </div>
